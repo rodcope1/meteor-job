@@ -5,14 +5,16 @@
   "main": "lib/job_class.js",
   "dependencies": {},
   "devDependencies": {
-    "coffee-script": "^1.12.6",
-    "mocha": "^3.4.2",
-    "rewire": "^2.5.2",
-    "sinon": "^2.3.5",
     "chai": "^4.0.2",
-    "fibers": "^2.0.0"
+    "coffee-script": "^1.12.6",
+    "fibers": "^2.0.0",
+    "mocha": "^3.4.2",
+    "nyc": "^11.7.1",
+    "rewire": "^2.5.2",
+    "sinon": "^2.3.5"
   },
   "scripts": {
+    "coverage": "nyc --extension .coffee --reporter=html make test",
     "prepare": "coffee --compile --output lib/ src/",
     "test": "make test"
   },
