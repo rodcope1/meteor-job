@@ -643,7 +643,7 @@ Job.ddpMethodPermissions = {
 Create a new `Job` object.  Data should be reasonably small, if worker requires a lot of data (e.g. video, image or sound files), they should be included by reference (e.g. with a URL pointing to the data, and another to where the result should be saved).
 
 ```javascript
-job = new Job(  // new is optional
+job = new Job(  // new is required
   'jobQueue',   // job collection name
   'jobType',    // type of the job
   { /* ... */ } // Data for the worker, any valid EJSON object
@@ -655,7 +655,7 @@ job = new Job(  // new is optional
 Make a Job object from a job Collection document. Creates a new `Job` object. This is used in cases where a valid Job document is obtained from another source, such as a database lookup.
 
 ```javascript
-job = new Job(  // new is optional
+job = new Job(  // new is required
   'jobQueue',   // job collection name
   { /* ... */ } // any valid Job document
 );

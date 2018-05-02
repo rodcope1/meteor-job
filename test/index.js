@@ -124,8 +124,6 @@ describe('Job', function() {
 
    it('has a _ddp_apply class variable that defaults as undefined outside of Meteor', () => assert.isUndefined(Job._ddp_apply));
 
-   it('has a processJobs method that is the JobQueue constructor', () => assert.equal(Job.processJobs, Job.__get__("JobQueue")));
-
    describe('setDDP', function() {
 
       const ddp = new DDP();
@@ -538,12 +536,7 @@ describe('Job', function() {
          return checkJob(job);
       });
 
-      it('should work without "new"', function() {
-         const job = Job('root', 'work', { foo: "bar" });
-         return checkJob(job);
-      });
-
-      it('should throw when given bad parameters', () => assert.throw(Job, /new Job: bad parameter/));
+      it('should throw when given bad parameters', () => assert.throw(() => new Job, /new Job: bad parameter/));
 
       it('should support using a valid job document', function() {
          const job = new Job('root', 'work', { foo: "bar" });
@@ -566,16 +559,16 @@ describe('Job', function() {
       let doc = null;
 
       beforeEach(function() {
-         job = Job('root', 'work', {});
+         job = new Job('root', 'work', {});
          return doc = job._doc;
       });
 
       describe('.depends()', function() {
 
          it('should properly update the depends property', function() {
-            const jobA = Job('root', 'work', {});
+            const jobA = new Job('root', 'work', {});
             jobA._doc._id = 'foo';
-            const jobB = Job('root', 'work', {});
+            const jobB = new Job('root', 'work', {});
             jobB._doc._id = 'bar';
             const j = job.depends([ jobA, jobB ]);
             assert.equal(j, job);
@@ -583,7 +576,7 @@ describe('Job', function() {
        });
 
          it('should accept a singlet Job', function() {
-            const jobA = Job('root', 'work', {});
+            const jobA = new Job('root', 'work', {});
             jobA._doc._id = 'foo';
             const j = job.depends(jobA);
             assert.equal(j, job);
@@ -591,7 +584,7 @@ describe('Job', function() {
        });
 
          it('should accept an empty deps array and return the job unchanged', function() {
-            const jobA = Job('root', 'work', {});
+            const jobA = new Job('root', 'work', {});
             jobA._doc._id = 'foo';
             let j = job.depends(jobA);
             assert.equal(j, job);
@@ -602,7 +595,7 @@ describe('Job', function() {
        });
 
          it('should clear dependencies when passed a falsy value', function() {
-            const jobA = Job('root', 'work', {});
+            const jobA = new Job('root', 'work', {});
             jobA._doc._id = 'foo';
             const j = job.depends(jobA);
             assert.equal(j, job);
@@ -616,7 +609,7 @@ describe('Job', function() {
          it('should throw when given an array containing non Jobs', () => assert.throw((() => job.depends(["Badness"])), /Each provided object/));
 
          return it('should throw when given an array containing unsaved Jobs without an _id', function() {
-            const jobA = Job('root', 'work', {});
+            const jobA = new Job('root', 'work', {});
             return assert.throw((() => job.depends([ jobA ])), /Each provided object/);
          });
       });
@@ -785,7 +778,7 @@ describe('Job', function() {
          let doc = null;
 
          beforeEach(function() {
-            job = Job('root', 'work', {});
+            job = new Job('root', 'work', {});
             return doc = job._doc;
          });
 
@@ -1304,7 +1297,7 @@ describe('Job', function() {
                   const max = (params[1] != null ? params[1].maxJobs : undefined) != null ? (params[1] != null ? params[1].maxJobs : undefined) : 1;
                   const res = (() => { switch (type) {
                      case 'work':
-                        return ( __range__(1, max, true).map((i) => Job('root', type, { i: 1 })._doc) );
+                        return ( __range__(1, max, true).map((i) => new Job('root', type, { i: 1 })._doc) );
                      case 'nowork':
                         return [];
                   } })();
@@ -1375,7 +1368,7 @@ describe('Job', function() {
                const one = function(id) {
                   j = (() => { switch (id) {
                      case 'goodID':
-                        return Job('root', 'work', { i: 1 })._doc;
+                        return new Job('root', 'work', { i: 1 })._doc;
                      default:
                         return undefined;
                   } })();
@@ -1633,7 +1626,7 @@ describe('JobQueue', function() {
          job.done();
          return cb(null);
       });
-      assert.instanceOf(q, Job.processJobs);
+      assert.instanceOf(q, Job.__get__("JobQueue"));
       return q.shutdown({ quiet: true }, function() {
          assert.equal(doneCalls, 0);
          assert.equal(failCalls, 0);
@@ -1646,7 +1639,7 @@ describe('JobQueue', function() {
          job.done();
          return cb(null);
       });
-      assert.instanceOf(q, Job.processJobs);
+      assert.instanceOf(q, Job.__get__("JobQueue"));
       return q.shutdown({ quiet: true }, function() {
          assert.equal(doneCalls, 0);
          assert.equal(failCalls, 0);
@@ -1668,7 +1661,7 @@ describe('JobQueue', function() {
          job.done();
          return cb(null);
       });
-      assert.instanceOf(q, Job.processJobs);
+      assert.instanceOf(q, Job.__get__("JobQueue"));
       assert.throws((() => q.shutdown(() => done())), /warning/);
       revert();
       return q.shutdown({ quiet: true }, function() {

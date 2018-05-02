@@ -483,7 +483,7 @@ class Job {
     this._ddp_apply = undefined;
   
     // This is defined above
-    this.processJobs = JobQueue;
+    this.processJobs = (...args) => new JobQueue(...args);
   
     // Makes a job object from a job document
     // This method is deprecated and will be removed

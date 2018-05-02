@@ -1,6 +1,6 @@
 #### NEXT
 
-* Decaffeinated this project by carefully using [decaffeinate-project.org](http://decaffeinate-project.org) on the files
+* Decaffeinated this project by carefully using [decaffeinate-project.org](http://decaffeinate-project.org) on the files. Now is required to create an instance of the class with `new Job`, just calling `Job` does not work anymore.
 
 #### 1.5.2
 
