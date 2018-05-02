@@ -1,6 +1,5 @@
 /*
  * decaffeinate suggestions:
- * DS101: Remove unnecessary use of Array.from
  * DS102: Remove unnecessary code created because of implicit returns
  * DS205: Consider reworking code to avoid use of IIFEs
  * DS207: Consider shorter variations of null checks
@@ -884,7 +883,7 @@ describe('Job', function() {
                   const runId = params[1];
                   const msg = params[2];
                   const level = (params[3] != null ? params[3].level : undefined) != null ? (params[3] != null ? params[3].level : undefined) : 'gerinfo';
-                  if ((id === 'thisId') && (runId === 'thatId') && (msg === 'Hello') && Array.from(Job.jobLogLevels).includes(level)) {
+                  if ((id === 'thisId') && (runId === 'thatId') && (msg === 'Hello') && Job.jobLogLevels.includes(level)) {
                      res = level;
                   } else {
                      res = false;
@@ -1378,7 +1377,8 @@ describe('Job', function() {
                if (ids instanceof Array) {
                   res = ((() => {
                     const result = [];
-                    for (j of Array.from(ids)) {                       if (j === 'goodID') {
+                    for (j of ids) {
+                      if (j === 'goodID') {
                         result.push(one(j));
                       }
                     }
@@ -1777,7 +1777,7 @@ describe('JobQueue', function() {
          assert.equal(jobs.length, 5);
          assert.equal(q.length(), 0);
          assert.equal(q.running(), 1);
-         for (let j of Array.from(jobs)) { j.done(); }
+         for (let j of jobs) { j.done(); }
          q.shutdown({ quiet: true }, function() {
             assert.equal(doneCalls, 5);
             assert.equal(failCalls, 0);
@@ -1798,7 +1798,7 @@ describe('JobQueue', function() {
                assert.equal(q.length(), 0);
                assert.equal(q.running(), count / 5);
                count -= jobs.length;
-               for (let j of Array.from(jobs)) { j.done(); }
+               for (let j of jobs) { j.done(); }
                if (!(count > 0)) {
                   q.shutdown({ quiet: true }, function() {
                      assert.equal(doneCalls, 25);
@@ -1872,7 +1872,7 @@ describe('JobQueue', function() {
             function() {
                assert.equal(q.running(), count / 5);
                count -= jobs.length;
-               for (let j of Array.from(jobs)) { j.done(); }
+               for (let j of jobs) { j.done(); }
                if (count === 5) {
                   q.shutdown({ quiet: true }, function() {
                      assert.equal(q.length(), 0, 'jobs remain in task list');

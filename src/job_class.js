@@ -1,6 +1,5 @@
 /*
  * decaffeinate suggestions:
- * DS101: Remove unnecessary use of Array.from
  * DS102: Remove unnecessary code created because of implicit returns
  * DS104: Avoid inline assignments
  * DS201: Simplify complex destructure assignments
@@ -109,7 +108,8 @@ const isNonEmptyStringOrArrayOfNonEmptyStrings = sa =>
       (sa.length !== 0) &&
       (((() => {
         const result = [];
-        for (let s of Array.from(sa)) {           if (isNonEmptyString(s)) {
+        for (let s of sa) {
+          if (isNonEmptyString(s)) {
             result.push(s);
           }
         }
@@ -243,7 +243,7 @@ class JobQueue {
             if (jobs.length > numJobsToGet) {
               this.errorCallback(new Error(`getWork() returned jobs (${jobs.length}) in excess of maxJobs (${numJobsToGet})`));
             }
-            for (let j of Array.from(jobs)) {
+            for (let j of jobs) {
               this._tasks.push(j);
               if (this._stoppingGetWork == null) { _setImmediate(this._process.bind(this)); }
             }
@@ -315,7 +315,7 @@ class JobQueue {
   _failJobs(tasks, callback) {
     if (tasks.length === 0) { _setImmediate(callback); }  // No Zalgo, thanks
     let count = 0;
-    return Array.from(tasks).map((job) =>
+    return tasks.map((job) =>
       job.fail("Worker shutdown", (err, res) => {
         count++;
         if (count === tasks.length) {
@@ -548,7 +548,7 @@ class Job {
     }
     return (() => {
       const result = [];
-      for (let collName of Array.from(collectionNames)) {
+      for (let collName of collectionNames) {
         if ((ddp == null) || (ddp.close == null) || (ddp.subscribe == null)) {
           // Not the DDP npm package
           if ((ddp === null) && ((typeof Meteor !== 'undefined' && Meteor !== null ? Meteor.apply : undefined) != null)) {
@@ -607,7 +607,7 @@ class Job {
       }
     }
     return methodCall(root, "getWork", [type, options], cb, res => {
-      const jobs = (Array.from(res).map((doc) => new Job(root, doc))) || [];
+      const jobs = (res.map((doc) => new Job(root, doc))) || [];
       if (options.maxJobs != null) {
         return jobs;
       } else {
@@ -643,10 +643,10 @@ class Job {
     let retVal = [];
     const chunksOfIds = splitLongArray(ids, 32);
     const myCb = reduceCallbacks(cb, chunksOfIds.length, concatReduce, []);
-    for (let chunkOfIds of Array.from(chunksOfIds)) {
+    for (let chunkOfIds of chunksOfIds) {
       retVal = retVal.concat(methodCall(root, "getJob", [chunkOfIds, options], myCb, doc => {
         if (doc) {
-          return (Array.from(doc).map((d) => new Job(root, d.type, d.data, d)));
+          return (doc.map((d) => new Job(root, d.type, d.data, d)));
         } else {
           return null;
         }
@@ -665,7 +665,7 @@ class Job {
     let retVal = false;
     const chunksOfIds = splitLongArray(ids, 256);
     const myCb = reduceCallbacks(cb, chunksOfIds.length);
-    for (let chunkOfIds of Array.from(chunksOfIds)) {
+    for (let chunkOfIds of chunksOfIds) {
       retVal = methodCall(root, "jobPause", [chunkOfIds, options], myCb) || retVal;
     }
     return retVal;
@@ -681,7 +681,7 @@ class Job {
     let retVal = false;
     const chunksOfIds = splitLongArray(ids, 256);
     const myCb = reduceCallbacks(cb, chunksOfIds.length);
-    for (let chunkOfIds of Array.from(chunksOfIds)) {
+    for (let chunkOfIds of chunksOfIds) {
       retVal = methodCall(root, "jobResume", [chunkOfIds, options], myCb) || retVal;
     }
     return retVal;
@@ -700,7 +700,7 @@ class Job {
     let chunksOfIds = splitLongArray(ids, 256);
     if (!(chunksOfIds.length > 0)) { chunksOfIds = [[]]; }
     const myCb = reduceCallbacks(cb, chunksOfIds.length);
-    for (let chunkOfIds of Array.from(chunksOfIds)) {
+    for (let chunkOfIds of chunksOfIds) {
       retVal = methodCall(root, "jobReady", [chunkOfIds, options], myCb) || retVal;
     }
     return retVal;
@@ -716,7 +716,7 @@ class Job {
     let retVal = false;
     const chunksOfIds = splitLongArray(ids, 256);
     const myCb = reduceCallbacks(cb, chunksOfIds.length);
-    for (let chunkOfIds of Array.from(chunksOfIds)) {
+    for (let chunkOfIds of chunksOfIds) {
       retVal = methodCall(root, "jobCancel", [chunkOfIds, options], myCb) || retVal;
     }
     return retVal;
@@ -733,7 +733,7 @@ class Job {
     let retVal = false;
     const chunksOfIds = splitLongArray(ids, 256);
     const myCb = reduceCallbacks(cb, chunksOfIds.length);
-    for (let chunkOfIds of Array.from(chunksOfIds)) {
+    for (let chunkOfIds of chunksOfIds) {
       retVal = methodCall(root, "jobRestart", [chunkOfIds, options], myCb) || retVal;
     }
     return retVal;
@@ -748,7 +748,7 @@ class Job {
     let retVal = false;
     const chunksOfIds = splitLongArray(ids, 256);
     const myCb = reduceCallbacks(cb, chunksOfIds.length);
-    for (let chunkOfIds of Array.from(chunksOfIds)) {
+    for (let chunkOfIds of chunksOfIds) {
       retVal = methodCall(root, "jobRemove", [chunkOfIds, options], myCb) || retVal;
     }
     return retVal;
@@ -869,7 +869,7 @@ class Job {
       }
       if (jobs instanceof Array) {
         ({ depends } = this._doc);
-        for (let j of Array.from(jobs)) {
+        for (let j of jobs) {
           if (!(j instanceof Job) || (j._doc._id == null)) {
             throw new Error('Each provided object must be a saved Job instance (with an _id)');
           }
@@ -939,7 +939,7 @@ class Job {
       options.wait = 5*60*1000;
     }
     if (options.backoff != null) {
-      if (!Array.from(Job.jobRetryBackoffMethods).includes(options.backoff)) {
+      if (!Job.jobRetryBackoffMethods.includes(options.backoff)) {
         throw new Error('bad option: invalid retry backoff method');
       }
     } else {
@@ -1045,7 +1045,7 @@ class Job {
     if (typeof message !== 'string') {
       throw new Error('Log message must be a string');
     }
-    if ((typeof options.level !== 'string') || !Array.from(Job.jobLogLevels).includes(options.level)) {
+    if ((typeof options.level !== 'string') || !Job.jobLogLevels.includes(options.level)) {
       throw new Error('Log level options must be one of Job.jobLogLevels');
     }
     if (options.echo != null) {
