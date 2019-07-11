@@ -1,6 +1,6 @@
 {
   "name": "meteor-job",
-  "version": "1.5.2",
+  "version": "1.5.3",
   "description": "Class for Meteor jobCollection for use both within meteor.js and with pure node.js workers",
   "main": "src/job_class.js",
   "dependencies": {},
@@ -18,7 +18,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/vsivsi/meteor-job.git"
+    "url": "https://github.com/rodcope1/meteor-job.git"
   },
   "keywords": [],
   "engine": {
@@ -26,7 +26,7 @@
   },
   "readmeFilename": "README.md",
   "bugs": {
-    "url": "https://github.com/vsivsi/meteor-job/issues"
+    "url": "https://github.com/rodcope1/meteor-job/issues"
   },
   "author": "Vaughn Iverson",
   "license": "MIT"
